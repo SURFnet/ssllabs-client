@@ -16,6 +16,6 @@
         "symfony/serializer": "~2.6.11"
     },
     "autoload": {
-        "psr-4": {"OpenConext\\SslLabs\\": "src/"}
+        "psr-4": {"SURFnet\\SslLabs\\": "src/"}
     }
 }
