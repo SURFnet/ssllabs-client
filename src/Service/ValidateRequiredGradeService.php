@@ -18,11 +18,6 @@ class ValidateRequiredGradeService
   /**
    * @var int
    */
-  private $maxAgeHours;
-
-  /**
-   * @var int
-   */
   private $timeout;
 
   /**
@@ -38,19 +33,17 @@ class ValidateRequiredGradeService
    */
   public function __construct(
     Client $client,
-    $maxAgeHours = 48,
     $timeout = 300
   ) {
     $this->client = $client;
-    $this->maxAgeHours = $maxAgeHours;
     $this->timeout = $timeout;
   }
 
   /**
-   * Synchronously (!) starts a new validation, waits for the results
+   * Synchronously (!) starts a validation, waits for the results
    * and compares the grade.
    *
-   * This will take at least 60 seconds.
+   * Note that this MAY take at least 60 seconds and MAY return cached results.
    *
    * @param string $hostName
    * @param string $grade
@@ -79,9 +72,9 @@ class ValidateRequiredGradeService
 
     $remaining = $this->timeout;
 
-    $hostDto = $this->client->analyze($hostName, false, true);
-
     while ($remaining > 0) {
+      $hostDto = $this->client->analyze($hostName);
+
       $endStatuses = array(Host::STATUS_ERROR, Host::STATUS_READY);
       if (in_array($hostDto->status, $endStatuses)) {
         return $this->resultsByHost[$hostName] = $hostDto;
@@ -89,8 +82,6 @@ class ValidateRequiredGradeService
 
       sleep(static::SLEEP_TIME);
       $remaining -= static::SLEEP_TIME;
-
-      $hostDto = $this->client->analyze($hostName);
     }
 
     throw new RuntimeException(
