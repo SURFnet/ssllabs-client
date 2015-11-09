@@ -3,7 +3,8 @@
 use Guzzle\Http\Client as HttpClient;
 use SURFnet\SslLabs\Client;
 use SURFnet\SslLabs\Dto\Endpoint;
-use SURFnet\SslLabs\Service\ValidateRequiredGradeService;
+use SURFnet\SslLabs\Service\GradeComparatorService;
+use SURFnet\SslLabs\Service\SynchronousAnalyzeService;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\PropertyNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -41,8 +42,16 @@ $passingGrade = isset($argv[2]) ? $argv[2] : Endpoint::GRADE_B;
 
 print "Starting analysis @ SSL Labs of $hostname" . PHP_EOL;
 
-$validator = new ValidateRequiredGradeService($client);
-$validated = $validator->validateMatchesGrade($hostname, $passingGrade);
+$api = new SynchronousAnalyzeService($client);
+$hostDto = $api->analyze($hostname);
+
+$validated = true;
+$comparator = new GradeComparatorService();
+foreach ($hostDto->endpoints as $endpoint) {
+  if (!$comparator->isHigherThan($endpoint->grade, $passingGrade)) {
+    $validated = false;
+  }
+}
 
 if ($validated) {
     print "[PASS] SSL Labs gives $hostname an equal or greater grade than the required grade $passingGrade" . PHP_EOL;
