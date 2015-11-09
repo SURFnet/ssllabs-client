@@ -1,5 +1,5 @@
 {
-    "name": "surfnet/ssl-labs",
+    "name": "surfnet/ssllabs-client",
     "description": "API client for the SSL Labs Assessment APIs",
     "type": "library",
     "license": "Apache-2",
