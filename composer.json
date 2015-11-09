@@ -1,0 +1,21 @@
+{
+    "name": "surfnet/ssl-labs",
+    "description": "API client for the SSL Labs Assessment APIs",
+    "type": "library",
+    "license": "Apache-2",
+    "authors": [
+        {
+            "name": "Boy Baukema",
+            "email": "boy@ibuildings.nl"
+        }
+    ],
+    "require": {
+        "guzzle/guzzle": "~3.9.3",
+        "php": ">=5.3.3",
+        "psr/log": "~1.0.0",
+        "symfony/serializer": "~2.6.11"
+    },
+    "autoload": {
+        "psr-4": {"OpenConext\\SslLabs\\": "src/"}
+    }
+}
