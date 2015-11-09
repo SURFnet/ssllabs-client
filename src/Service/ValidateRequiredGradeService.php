@@ -60,7 +60,6 @@ class ValidateRequiredGradeService
   {
     $hostDto = $this->analyze($hostName);
 
-    var_dump($hostDto);
     foreach ($hostDto->endpoints as $endpointDto) {
       if ($this->isGradeGreaterThan($endpointDto->grade, $grade)) {
         continue;
@@ -85,8 +84,7 @@ class ValidateRequiredGradeService
     while ($remaining > 0) {
       $endStatuses = array(Host::STATUS_ERROR, Host::STATUS_READY);
       if (in_array($hostDto->status, $endStatuses)) {
-        $this->resultsByHost[$hostName] = $hostDto;
-        return $this->resultsByHost[$hostName];
+        return $this->resultsByHost[$hostName] = $hostDto;
       }
 
       sleep(static::SLEEP_TIME);
@@ -109,6 +107,6 @@ class ValidateRequiredGradeService
    */
   private function isGradeGreaterThan($grade, $passingGrade)
   {
-    return ord(substr($grade, 0, 1)) > ord(substr($passingGrade, 0, 1));
+    return ord(substr($grade, 0, 1)) <= ord(substr($passingGrade, 0, 1));
   }
 }

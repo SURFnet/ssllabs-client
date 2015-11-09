@@ -89,11 +89,7 @@ class Client
 
         $response = $request->send();
 
-        return $this->serializer->deserialize(
-            $response->getBody(true),
-            Host::CLASS_NAME,
-            'json'
-        );
+        return $this->mapJsonToHost($response->getBody(true));
     }
 
     public function getEndpointData($host, $s, $fromCache = false)
@@ -142,5 +138,30 @@ class Client
         }
 
         return 'off';
+    }
+
+    /**
+     * @param $response
+     * @return Host
+     */
+    private function mapJsonToHost($json) {
+        /** @var Host $host */
+        $host = $this->serializer->deserialize(
+          $json,
+          Host::CLASS_NAME,
+          'json'
+        );
+
+        $endpointDtos = array();
+        foreach ($host->endpoints as $endpoint) {
+            $endpointDto = new Endpoint();
+            foreach ($endpoint as $key => $value) {
+                $endpointDto->$key = $value;
+            }
+            $endpointDtos[] = $endpointDto;
+        }
+        $host->endpoints = $endpointDtos;
+
+        return $host;
     }
 }
