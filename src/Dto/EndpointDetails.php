@@ -33,8 +33,6 @@ class EndpointDetails
     public $chain;
 
     /**
-     *
-     *
      * @var Protocol[]
      */
     public $protocols;

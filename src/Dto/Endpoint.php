@@ -107,5 +107,4 @@ class Endpoint
      * @var EndpointDetails
      */
     public $details;
-
 }
