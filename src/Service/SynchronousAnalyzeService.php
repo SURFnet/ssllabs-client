@@ -38,20 +38,32 @@ class SynchronousAnalyzeService
       $this->timeout = $timeout;
     }
 
-    public function analyze($hostName)
+    /**
+     * @param string $hostName
+     * @param bool|false $full
+     * @return Host
+     */
+    public function analyze($hostName, $full = false)
     {
-        if (!empty($this->resultsByHost[$hostName])) {
-          return $this->resultsByHost[$hostName];
+        if (!empty($this->resultsByHost[$hostName . $full])) {
+          return $this->resultsByHost[$hostName . $full];
         }
 
         $remaining = $this->timeout;
 
         while ($remaining > 0) {
-          $hostDto = $this->client->analyze($hostName);
+          $hostDto = $this->client->analyze(
+              $hostName,
+              null,
+              null,
+              null,
+              null,
+              $full ? Client::ALL_DONE : null
+          );
 
           $endStatuses = array(Host::STATUS_ERROR, Host::STATUS_READY);
           if (in_array($hostDto->status, $endStatuses)) {
-            return $this->resultsByHost[$hostName] = $hostDto;
+            return $this->resultsByHost[$hostName . $full] = $hostDto;
           }
 
           sleep(static::SLEEP_TIME);
