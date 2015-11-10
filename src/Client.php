@@ -4,6 +4,7 @@ namespace SURFnet\SslLabs;
 
 use Guzzle\Http\Client as HttpClient;
 use SURFnet\SslLabs\Dto\Endpoint;
+use SURFnet\SslLabs\Dto\EndpointDetails;
 use SURFnet\SslLabs\Dto\Host;
 use SURFnet\SslLabs\Dto\StatusCodes;
 use Symfony\Component\Serializer\Serializer;
@@ -65,12 +66,12 @@ class Client
      */
     public function analyze(
         $host,
-        $publish = false,
+        $publish = null,
         $startNew = null,
-        $fromCache = false,
+        $fromCache = null,
         $maxAge = null,
         $all = null,
-        $ignoreMismatch = false
+        $ignoreMismatch = null
     ) {
         $arguments = array(
             'host'              => $host,
@@ -92,7 +93,7 @@ class Client
         return $this->mapJsonToHost($response->getBody(true));
     }
 
-    public function getEndpointData($host, $s, $fromCache = false)
+    public function getEndpointData($host, $s, $fromCache = null)
     {
         $arguments = array(
             'host'              => $host,
