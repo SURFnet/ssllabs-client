@@ -3,38 +3,27 @@
 namespace SURFnet\SslLabs\Service;
 
 use RuntimeException;
-use SURFnet\SslLabs\Client;
 use SURFnet\SslLabs\Dto\Host;
 
-class SynchronousAnalyzeService
+class SynchronousAnalyzeService implements AnalyzeServiceInterface
 {
     const SLEEP_TIME = 10;
 
     /**
-     * @var Client
+     * @var AsynchronousAnalyzeService
      */
-    private $client;
-
-    /**
-     * @var int
-     */
-    private $timeout;
-
-    /**
-     * @var array
-     */
-    private $resultsByHost = array();
+    private $asyncAnalyzeService;
 
     /**
      * ValidateRequiredGrade constructor.
-     * @param Client $client
+     * @param AsynchronousAnalyzeService $analyzeService
      * @param int $timeout
      */
     public function __construct(
-      Client $client,
+      AsynchronousAnalyzeService $analyzeService,
       $timeout = 300
     ) {
-      $this->client = $client;
+      $this->asyncAnalyzeService = $analyzeService;
       $this->timeout = $timeout;
     }
 
@@ -45,25 +34,17 @@ class SynchronousAnalyzeService
      */
     public function analyze($hostName, $full = false)
     {
-        if (!empty($this->resultsByHost[$hostName . $full])) {
-          return $this->resultsByHost[$hostName . $full];
-        }
-
         $remaining = $this->timeout;
 
         while ($remaining > 0) {
-          $hostDto = $this->client->analyze(
+          $hostDto = $this->asyncAnalyzeService->analyze(
               $hostName,
-              null,
-              null,
-              null,
-              null,
-              $full ? Client::ALL_DONE : null
+              $full
           );
 
           $endStatuses = array(Host::STATUS_ERROR, Host::STATUS_READY);
           if (in_array($hostDto->status, $endStatuses)) {
-            return $this->resultsByHost[$hostName . $full] = $hostDto;
+            return $hostDto;
           }
 
           sleep(static::SLEEP_TIME);
