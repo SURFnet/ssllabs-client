@@ -153,6 +153,11 @@ class Client
           'json'
         );
 
+        if (empty($host->endpoints)) {
+            $host->endpoints = array();
+            return $host;
+        }
+
         $endpointDtos = array();
         foreach ($host->endpoints as $endpoint) {
             $endpointDto = new Endpoint();
