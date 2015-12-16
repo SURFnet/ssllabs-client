@@ -5,6 +5,7 @@ use SURFnet\SslLabs\Client;
 use SURFnet\SslLabs\Dto\Endpoint;
 use SURFnet\SslLabs\Service\GradeComparatorService;
 use SURFnet\SslLabs\Service\SynchronousAnalyzeService;
+use SURFnet\SslLabs\Service\AsynchronousAnalyzeService;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\PropertyNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -42,7 +43,9 @@ $passingGrade = isset($argv[2]) ? $argv[2] : Endpoint::GRADE_B;
 
 print "Starting analysis @ SSL Labs of $hostname" . PHP_EOL;
 
-$api = new SynchronousAnalyzeService($client);
+$api = new SynchronousAnalyzeService(
+    new AsynchronousAnalyzeService($client)
+);
 $hostDto = $api->analyze($hostname);
 
 $validated = true;
