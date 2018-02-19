@@ -2,7 +2,7 @@
     "name": "surfnet/ssllabs-client",
     "description": "API client for the SSL Labs Assessment APIs",
     "type": "library",
-    "license": "Apache-2",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Boy Baukema",
